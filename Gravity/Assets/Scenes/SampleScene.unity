@@ -517,7 +517,6 @@ GameObject:
   - component: {fileID: 985037199}
   - component: {fileID: 985037198}
   - component: {fileID: 5014872957735552075}
-  - component: {fileID: 985037200}
   m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
@@ -565,7 +564,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: fff8609785b806a4ab5e86da7432282f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0684ec337e8a2d74899448449a28470a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -585,7 +584,7 @@ Transform:
   m_GameObject: {fileID: 985037195}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -5.95, y: -1.52, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.9, y: 0.9, z: 1}
   m_Children:
   - {fileID: 505813035}
   - {fileID: 1615772357}
@@ -612,7 +611,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &985037199
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -639,25 +638,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &985037200
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 985037195}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c05758b7c75b7848ab9caf32acf1535, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  movementSmoothing: 0.05
-  whatIsGround:
-    serializedVersion: 2
-    m_Bits: 1335
-  checkGround: {fileID: 505813035}
-  checkCeiling: {fileID: 1615772357}
-  checkPoint: {fileID: 1008754075}
 --- !u!1 &1008754074
 GameObject:
   m_ObjectHideFlags: 0
@@ -1827,4 +1807,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e9953f80c45f742a423845684ad1c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 985037200}
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 1335
+  checkGround: {fileID: 505813035}
+  checkCeiling: {fileID: 1615772357}
+  checkPoint: {fileID: 1008754075}
