@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
 
 	#region Consts
 		const float SpeedRun 		= 10f;
+		const float SpeedMax 		= .05f;
+		const float SpeedDec 		= .03f;
 		const float JumpForce 		= 1850f;
 		const float GForce 			= 13f;
 		const float VelBulletTime 	= 2f;
@@ -79,11 +81,15 @@ public class Player : MonoBehaviour
 
 	void Move()
 	{
-		// Walk
-		if (!isMoveVer) rb.velocity = new Vector2(moveX			, rb.velocity.y);
-		else 			rb.velocity = new Vector2(rb.velocity.x	, moveX);
+		// Axis
+		Vector2 velTarget;
+		if (!isMoveVer) velTarget = new Vector2(moveX			, rb.velocity.y);
+		else 			velTarget = new Vector2(rb.velocity.x	, moveX);
 
-		// TODO: apply acceleration over small amout of time
+		// Acceleration / Deacceleration
+		Vector2 velCur 		= Vector2.zero;
+		float smoothTime 	= velTarget == Vector2.zero ? SpeedDec : SpeedMax;
+		rb.velocity 		= Vector2.SmoothDamp(rb.velocity, velTarget, ref velCur, smoothTime);
 	}
 
 	void Jump()
