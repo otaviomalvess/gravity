@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
 		[SerializeField] LayerMask 	whatIsGround;	// A mask determining what is ground to the character
 		[SerializeField] Transform 	checkGround;	// A position marking where to check if the player is grounded.
 		[SerializeField] Transform 	checkPoint;
-		[SerializeField] Vector2 	test; 			// Variable for tests
+		[SerializeField] Vector2  	test; 			// Variable for tests
 	#endregion
 
 	#region Consts
@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
 		const float JumpForce 		= 3200f;
 		const float GForce 			= 13f;
 		const float VelBulletTime 	= 2f;
-		const float FallLimit 		= 11f;
+		const float FallLimit 		= 30f;
 	#endregion
 
 	#region Vars
@@ -27,6 +27,7 @@ public class Player : MonoBehaviour
 		bool 			isGChange 	= false;
 		bool 			isMoveVer 	= false; 	// Whether the player movement is in the X or Y axis
 		float 			run 		= 0f;
+		Vector2 		dirGForce; 				// GForce * rb.mass * dirGravity
 		Vector2 		jumpDir 	= Vector2.up * JumpForce;
 		Vector2 		dirGravity 	= Vector2.down;
 		Rigidbody2D 	rb;
@@ -65,20 +66,7 @@ public class Player : MonoBehaviour
 
 		// Jump
 		if (Input.GetButtonDown("Jump") && isGrounded) 	isJumping = true;
-		if (Input.GetButtonUp("Jump")) 					JumpCut();
-	}
-
-	void FixedUpdate()
-	{
-		if (isDead) return;
-		
-		// Gravity
-		rb.velocity += GForce * rb.mass * dirGravity * Time.fixedDeltaTime;
-
-		Collision();
-		Move();
-		Jump();
-		isGChange = false;
+		if (Input.GetButtonUp("Jump")) 	JumpCut();
 	}
 
 	void ChangeGravity(Vector2 dir)
@@ -90,13 +78,37 @@ public class Player : MonoBehaviour
 
 		transform.rotation = Quaternion.Euler(0f, 0f, rotAngle); // TODO: smooth rotation
 
-		dirGravity 	= dir; 					// Gravity direction
-		jumpDir 	= -dir * JumpForce; 	// Jump direction
-		isMoveVer 	= dir.y == 0f; 			// Vertical move
+		dirGravity 	= dir; 						// Gravity direction
+		dirGForce 	= GForce * rb.mass * dir;
+		jumpDir 	= -dir * JumpForce; 		// Jump direction
+		isMoveVer 	= dir.y == 0f; 				// Vertical move
 		isGChange 	= false;
 	}
 
-	// TODO: player not moving on air
+	void FixedUpdate()
+	{
+		if (isDead) return;
+		
+		ApplyGravity();
+		Collision();
+		Move();
+		Jump();
+		isGChange = false;
+	}
+
+	void ApplyGravity()
+	{
+		Vector2 apply = rb.velocity + (dirGForce * Time.fixedDeltaTime);
+		
+		// Limit fall speed
+		if 		(dirGravity == Vector2.down) 	apply.y = apply.y < -FallLimit ? -FallLimit : apply.y;
+		else if (dirGravity == Vector2.up) 		apply.y = apply.y >  FallLimit ?  FallLimit : apply.y;
+		else if (dirGravity == Vector2.left) 	apply.x = apply.x < -FallLimit ? -FallLimit : apply.x;
+		else if (dirGravity == Vector2.right) 	apply.x = apply.x >  FallLimit ?  FallLimit : apply.x;
+
+		rb.velocity = apply;
+	}
+	
 	void Move()
 	{
 		// Axis
@@ -122,17 +134,12 @@ public class Player : MonoBehaviour
 
 		void JumpCut()
 		{
-			// TODO: when button is released near complete stop in air, the force is added to the gravity
-			
-			rb.AddForce(-jumpDir / 3);
-		}
+			if 		(dirGravity == Vector2.down 	&& rb.velocity.y < 5f) 	return;
+			else if (dirGravity == Vector2.up 		&& rb.velocity.y > -5f) return;
+			else if (dirGravity == Vector2.left 	&& rb.velocity.x < 5f) 	return;
+			else if (dirGravity == Vector2.right 	&& rb.velocity.x > -5f) return;
 
-		bool IsFalling()
-		{
-			if 		(dirGravity == Vector2.down) 	return rb.velocity.y < 0;
-			else if (dirGravity == Vector2.up) 		return rb.velocity.y > 0;
-			else if (dirGravity == Vector2.right) 	return rb.velocity.x > 0;
-			return rb.velocity.x < 0;
+			rb.AddForce(-jumpDir / 3);
 		}
 	#endregion
 
