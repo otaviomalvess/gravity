@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
 		const float SpeedRun 		= 10f;
 		const float SpeedMax 		= .05f;
 		const float SpeedDec 		= .03f;
-		const float JumpForce 		= 1850f;
+		const float JumpForce 		= 3200f;
 		const float GForce 			= 13f;
 		const float VelBulletTime 	= 2f;
 	#endregion
@@ -23,9 +23,10 @@ public class Player : MonoBehaviour
 		bool 			isGrounded	= false;
 		bool 			isDead 		= false;
 		bool 			isJumping 	= false;
+		bool 			isHelding 	= false;
 		bool 			isGChange 	= false;
 		bool 			isMoveVer 	= false; 	// Whether the player movement is in the X or Y axis 
-		float 			moveX 		= 0f;
+		float 			run 		= 0f;
 		Vector2 		jumpDir 	= Vector2.up * JumpForce;
 		Vector2 		dirGravity 	= Vector2.down;
 		Rigidbody2D 	rb;
@@ -58,12 +59,12 @@ public class Player : MonoBehaviour
 		}
 		
 		// Walk
-		if (!isMoveVer) moveX = Input.GetAxisRaw("Horizontal") 	* SpeedRun;
-		else 			moveX = Input.GetAxisRaw("Vertical") 	* SpeedRun;
+		if (!isMoveVer) run = Input.GetAxisRaw("Horizontal") 	* SpeedRun;
+		else 			run = Input.GetAxisRaw("Vertical") 		* SpeedRun;
 
 		// Jump
-		if (Input.GetButtonDown("Jump")) 	isJumping = true;
-		if (Input.GetButtonUp("Jump")) 		isJumping = false;
+		if (Input.GetButtonDown("Jump")) 	{ isJumping = true; isHelding = true; }
+		if (Input.GetButtonUp("Jump")) 		  isHelding = false;
 	}
 
 	void FixedUpdate()
@@ -83,8 +84,8 @@ public class Player : MonoBehaviour
 	{
 		// Axis
 		Vector2 velTarget;
-		if (!isMoveVer) velTarget = new Vector2(moveX			, rb.velocity.y);
-		else 			velTarget = new Vector2(rb.velocity.x	, moveX);
+		if (!isMoveVer) velTarget = new Vector2(run				, rb.velocity.y);
+		else 			velTarget = new Vector2(rb.velocity.x	, run);
 
 		// Acceleration / Deacceleration
 		Vector2 velCur 		= Vector2.zero;
@@ -96,10 +97,16 @@ public class Player : MonoBehaviour
 	{
 		if (!isGrounded && IsFalling()) { isJumping = false; return; }
 
-		// TODO: jump is stronger at the X axis
-		// The longer holds the button, higher the jump
-		if 		(isGrounded && isJumping) 	rb.AddForce(jumpDir);
-		else if (!isJumping) 				rb.AddForce(-jumpDir / 4);
+		// The longer the button is held, higher the jump
+		if (isGrounded && isJumping)
+		{
+			rb.AddForce(jumpDir);
+			isJumping = false;
+		}
+		else if (!isHelding)
+		{
+			rb.AddForce(-jumpDir / 8);
+		}
 	}
 
 	void ChangeGravity(Vector2 dir)
@@ -114,6 +121,7 @@ public class Player : MonoBehaviour
 		dirGravity 	= dir; 					// Gravity direction
 		jumpDir 	= -dir * JumpForce; 	// Jump direction
 		isMoveVer 	= dir.y == 0f; 			// Vertical move
+		isGChange 	= false;
 	}
 
 	bool IsFalling()
