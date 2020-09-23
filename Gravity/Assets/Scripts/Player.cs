@@ -8,15 +8,15 @@ public class Player : MonoBehaviour
 		[SerializeField] LayerMask 	whatIsGround;	// A mask determining what is ground to the character
 		[SerializeField] Transform 	checkGround;	// A position marking where to check if the player is grounded.
 		[SerializeField] Transform 	checkPoint;
+		[SerializeField] Vector2 	test; 			// Variable for tests
 	#endregion
 
 	#region Consts
 		const float SpeedRun 		= 10f;
-		const float SpeedMax 		= .05f;
-		const float SpeedDec 		= .03f;
 		const float JumpForce 		= 3200f;
 		const float GForce 			= 13f;
 		const float VelBulletTime 	= 2f;
+		const float FallLimit 		= 11f;
 	#endregion
 
 	#region Vars
@@ -25,7 +25,7 @@ public class Player : MonoBehaviour
 		bool 			isJumping 	= false;
 		bool 			isHelding 	= false;
 		bool 			isGChange 	= false;
-		bool 			isMoveVer 	= false; 	// Whether the player movement is in the X or Y axis 
+		bool 			isMoveVer 	= false; 	// Whether the player movement is in the X or Y axis
 		float 			run 		= 0f;
 		Vector2 		jumpDir 	= Vector2.up * JumpForce;
 		Vector2 		dirGravity 	= Vector2.down;
@@ -49,7 +49,8 @@ public class Player : MonoBehaviour
 		if (Input.GetButton("Change Gravity")) isGChange = true; // TODO: add bullet time
 
 		// Change gravity
-		if (isGChange) {
+		if (isGChange)
+		{
 			if (Input.GetKey(KeyCode.W)) ChangeGravity(Vector2.up);
 			if (Input.GetKey(KeyCode.S)) ChangeGravity(Vector2.down);
 			if (Input.GetKey(KeyCode.A)) ChangeGravity(Vector2.left);
@@ -63,8 +64,8 @@ public class Player : MonoBehaviour
 		else 			run = Input.GetAxisRaw("Vertical") 		* SpeedRun;
 
 		// Jump
-		if (Input.GetButtonDown("Jump")) 	{ isJumping = true; isHelding = true; }
-		if (Input.GetButtonUp("Jump")) 		  isHelding = false;
+		if (Input.GetButtonDown("Jump") && isGrounded) 	isJumping = true;
+		if (Input.GetButtonUp("Jump")) 					JumpCut();
 	}
 
 	void FixedUpdate()
@@ -78,35 +79,6 @@ public class Player : MonoBehaviour
 		Move();
 		Jump();
 		isGChange = false;
-	}
-
-	void Move()
-	{
-		// Axis
-		Vector2 velTarget;
-		if (!isMoveVer) velTarget = new Vector2(run				, rb.velocity.y);
-		else 			velTarget = new Vector2(rb.velocity.x	, run);
-
-		// Acceleration / Deacceleration
-		Vector2 velCur 		= Vector2.zero;
-		float smoothTime 	= velTarget == Vector2.zero ? SpeedDec : SpeedMax;
-		rb.velocity 		= Vector2.SmoothDamp(rb.velocity, velTarget, ref velCur, smoothTime);
-	}
-
-	void Jump()
-	{
-		if (!isGrounded && IsFalling()) { isJumping = false; return; }
-
-		// The longer the button is held, higher the jump
-		if (isGrounded && isJumping)
-		{
-			rb.AddForce(jumpDir);
-			isJumping = false;
-		}
-		else if (!isHelding)
-		{
-			rb.AddForce(-jumpDir / 8);
-		}
 	}
 
 	void ChangeGravity(Vector2 dir)
@@ -124,13 +96,45 @@ public class Player : MonoBehaviour
 		isGChange 	= false;
 	}
 
-	bool IsFalling()
+	// TODO: player not moving on air
+	void Move()
 	{
-		if 		(dirGravity == Vector2.down) 	return rb.velocity.y < 0;
-		else if (dirGravity == Vector2.up) 		return rb.velocity.y > 0;
-		else if (dirGravity == Vector2.right) 	return rb.velocity.x > 0;
-		return rb.velocity.x < 0;
+		// Axis
+		Vector2 velTarget;
+		if (!isMoveVer) velTarget = new Vector2(run				, rb.velocity.y);
+		else 			velTarget = new Vector2(rb.velocity.x	, run);
+
+		// Acceleration / Deacceleration
+		Vector2 velCur 		= rb.velocity;
+		float 	smoothTime 	= run == 0f ? .03f : .05f;
+
+		rb.velocity = Vector2.SmoothDamp(rb.velocity, velTarget, ref velCur, smoothTime);
 	}
+
+	#region Jump
+		void Jump()
+		{
+			if (!isJumping) return;
+
+			rb.AddForce(jumpDir);
+			isJumping = false;
+		}
+
+		void JumpCut()
+		{
+			// TODO: when button is released near complete stop in air, the force is added to the gravity
+			
+			rb.AddForce(-jumpDir / 3);
+		}
+
+		bool IsFalling()
+		{
+			if 		(dirGravity == Vector2.down) 	return rb.velocity.y < 0;
+			else if (dirGravity == Vector2.up) 		return rb.velocity.y > 0;
+			else if (dirGravity == Vector2.right) 	return rb.velocity.x > 0;
+			return rb.velocity.x < 0;
+		}
+	#endregion
 
 	#region (Re)Spawn
 		void Respawn()
@@ -156,12 +160,13 @@ public class Player : MonoBehaviour
 		}
 	#endregion
 
-	#region OnCollision
+	#region Collision
 
 		void Collision()
 		{
-			Collider2D col 	= Physics2D.OverlapBox(checkGround.transform.position, new Vector2(.7f, .2f), 0f, whatIsGround);
+			Collider2D col 	= Physics2D.OverlapBox(checkGround.transform.position, new Vector2(transform.localScale.x, .2f), 0f, whatIsGround);
 			isGrounded 		= col != null;
+			// TODO: draw collider
 		}
 
 		void OnCollisionEnter2D(Collision2D col)
