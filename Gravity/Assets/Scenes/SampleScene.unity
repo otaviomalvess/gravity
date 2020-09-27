@@ -7161,7 +7161,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   whatIsGround:
     serializedVersion: 2
-    m_Bits: 1335
+    m_Bits: 9527
   checkGround: {fileID: 505813035}
   checkCeiling: {fileID: 0}
   checkPoint: {fileID: 1441646842}
