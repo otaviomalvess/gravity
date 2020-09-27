@@ -7,4 +7,9 @@ public class Gridmap : MonoBehaviour
 	public Transform 			checkpoint;
 	public Exit 				roomExit;
 	public PolygonCollider2D 	bounds;
+
+	public void RenderTilemaps(bool shouldRender)
+	{
+		
+	}
 }

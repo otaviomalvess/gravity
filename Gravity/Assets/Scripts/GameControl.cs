@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using Cinemachine;
 
 public class GameControl : MonoBehaviour
@@ -10,9 +11,30 @@ public class GameControl : MonoBehaviour
 	[SerializeField] GameObject 			map; 		// Game map
 	[SerializeField] Gridmap 				curRoom; 	// The room the player is current in
 
-	public void LoadNextRoom()
+	void Awake()
 	{
+		DisableRooms();
+	}
+
+	void DisableRooms()
+	{
+		// Except the current
+		foreach (Transform child in map.transform)
+		{
+			if (child.gameObject == curRoom.gameObject) continue;
+
+			child.gameObject.SetActive(false);
+		}
+	}
+
+	public void LoadNextRoom()
+	{	
+		// Room
+		curRoom.gameObject.SetActive(false);
 		curRoom = curRoom.roomExit.nextRoom;
+		curRoom.gameObject.SetActive(true);
+
+		// Player
 		pl.SetCheckpoint(curRoom.checkpoint);
 		
 		// Camera
