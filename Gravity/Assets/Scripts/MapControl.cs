@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraControl : MonoBehaviour
+public class MapControl : MonoBehaviour
 {
-    void FixedUpdate()
-    {
-        
-    }
+	
 }

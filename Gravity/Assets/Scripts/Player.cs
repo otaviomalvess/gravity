@@ -6,7 +6,8 @@ public class Player : MonoBehaviour
 {
 	#region Serialized
 		[SerializeField] LayerMask 	whatIsGround;	// A mask determining what is ground to the character
-		[SerializeField] Transform 	checkGround;	// A position marking where to check if the player is grounded.
+		[SerializeField] Transform 	checkGround;	// A position marking where to check if the player is grounded
+		[SerializeField] Transform 	checkCeiling;	// A position marking where to check if the player is hitting the ceiling
 		[SerializeField] Transform 	checkPoint;
 		[SerializeField] Vector2  	test; 			// Variable for tests
 	#endregion
@@ -24,7 +25,7 @@ public class Player : MonoBehaviour
 		bool 			isDead 		= false;
 		bool 			isJumping 	= false;
 		bool 			isHelding 	= false;
-		bool 			isGChange 	= false;
+		bool 			canGChange 	= false;
 		bool 			isMoveVer 	= false; 	// Whether the player movement is in the X or Y axis
 		float 			run 		= 0f;
 		Vector2 		dirGForce; 				// GForce * rb.mass * dirGravity
@@ -47,10 +48,8 @@ public class Player : MonoBehaviour
 
 	void Update()
 	{
-		if (Input.GetButton("Change Gravity")) isGChange = true; // TODO: add bullet time
-
 		// Change gravity
-		if (isGChange)
+		if (Input.GetButton("Change Gravity") && canGChange)
 		{
 			if (Input.GetKey(KeyCode.W)) ChangeGravity(Vector2.up);
 			if (Input.GetKey(KeyCode.S)) ChangeGravity(Vector2.down);
@@ -82,7 +81,7 @@ public class Player : MonoBehaviour
 		dirGForce 	= GForce * rb.mass * dir;
 		jumpDir 	= -dir * JumpForce; 		// Jump direction
 		isMoveVer 	= dir.y == 0f; 				// Vertical move
-		isGChange 	= false;
+		canGChange 	= false;
 	}
 
 	void FixedUpdate()
@@ -93,7 +92,6 @@ public class Player : MonoBehaviour
 		Collision();
 		Move();
 		Jump();
-		isGChange = false;
 	}
 
 	void ApplyGravity()
@@ -148,6 +146,7 @@ public class Player : MonoBehaviour
 		{
 			isDead 		= true;
 			sr.enabled 	= false;
+			rb.velocity = Vector2.zero;
 			
 			StartCoroutine(Transition());
 		}
@@ -171,9 +170,12 @@ public class Player : MonoBehaviour
 
 		void Collision()
 		{
-			Collider2D col 	= Physics2D.OverlapBox(checkGround.transform.position, new Vector2(transform.localScale.x, .2f), 0f, whatIsGround);
-			isGrounded 		= col != null;
-			// TODO: draw collider
+			Collider2D colGround 	= Physics2D.OverlapBox(checkGround.transform.position, 	new Vector2(transform.localScale.x, .2f), 0f, whatIsGround);
+			// Collider2D colCeiling 	= Physics2D.OverlapBox(checkCeiling.transform.position, new Vector2(transform.localScale.x, .2f), 0f, 11);
+			
+			isGrounded = colGround != null;
+			if (isGrounded) canGChange = true;
+
 		}
 
 		void OnCollisionEnter2D(Collision2D col)
@@ -184,4 +186,11 @@ public class Player : MonoBehaviour
 			}
 		}
 	#endregion
+
+	public void SetCheckpoint(Transform cp)
+	{
+		checkPoint = cp;
+		test = checkPoint.position;
+		Spawn();
+	}
 }
