@@ -6,10 +6,14 @@ using Cinemachine;
 
 public class GameControl : MonoBehaviour
 {
-	[SerializeField] Player 				pl; 		// Player
-	[SerializeField] CinemachineConfiner 	cam;
-	[SerializeField] GameObject 			map; 		// Game map
-	[SerializeField] Gridmap 				curRoom; 	// The room the player is current in
+	#region Serialize
+		[SerializeField] Player 				pl; 		// Player
+		[SerializeField] CinemachineConfiner 	cam;
+		[SerializeField] GameObject 			map; 		// Game map
+		[SerializeField] Room 					curRoom; 	// The room the player is current in
+	#endregion
+
+	Transform[] roomFragilePlatforms;
 
 	void Awake()
 	{
@@ -40,5 +44,15 @@ public class GameControl : MonoBehaviour
 		// Camera
         cam.m_BoundingShape2D = curRoom.bounds;
         cam.InvalidatePathCache();
+	}
+
+	public void ReloadRoom()
+	{
+		curRoom.ReloadRoom();
+	}
+
+	public void UpdatePlatformTrigger(Vector2 dir)
+	{
+		curRoom.UpdatePlatformTrigger(dir);
 	}
 }

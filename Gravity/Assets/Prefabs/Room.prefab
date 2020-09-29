@@ -56,11 +56,40 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0, y: 1}
-      - {x: -0.95105654, y: 0.30901697}
-      - {x: -0.5877852, y: -0.80901706}
-      - {x: 0.58778536, y: -0.80901694}
-      - {x: 0.9510565, y: 0.30901712}
+    - - {x: -14, y: 8}
+      - {x: 14, y: 8}
+      - {x: 14, y: -8}
+      - {x: -14, y: -8}
+--- !u!1 &5408564504477635821
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8865051317324109979}
+  m_Layer: 0
+  m_Name: FragilePlatforms
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8865051317324109979
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5408564504477635821}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5805411257836401952}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5805411256442261292
 GameObject:
   m_ObjectHideFlags: 0
@@ -596,10 +625,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5805411257836401952}
-  - component: {fileID: 5805411257836401955}
   - component: {fileID: 4351590417617926287}
   m_Layer: 0
-  m_Name: Grid
+  m_Name: Room
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -621,21 +649,10 @@ Transform:
   - {fileID: 5805411256442261293}
   - {fileID: 1150421309856212203}
   - {fileID: 6539654490713414529}
+  - {fileID: 8865051317324109979}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!156049354 &5805411257836401955
-Grid:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5805411257836401954}
-  m_Enabled: 1
-  m_CellSize: {x: 1, y: 1, z: 0}
-  m_CellGap: {x: 0, y: 0, z: 0}
-  m_CellLayout: 0
-  m_CellSwizzle: 0
 --- !u!114 &4351590417617926287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -650,8 +667,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   checkpoint: {fileID: 5805411256442261293}
   roomExit: {fileID: 8210773192470832318}
-  moveX: 0
-  moveY: 0
+  bounds: {fileID: 7183695848430428427}
 --- !u!1 &8420969517639789075
 GameObject:
   m_ObjectHideFlags: 0

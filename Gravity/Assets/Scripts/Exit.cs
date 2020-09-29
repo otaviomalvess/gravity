@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 public class Exit : MonoBehaviour
 {
-	public Gridmap 		nextRoom;
+	public Room 		nextRoom;
 	public UnityEvent 	OnLoadEvent;
 
 	void Awake()

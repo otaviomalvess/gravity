@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Player : MonoBehaviour
 {
@@ -35,10 +36,22 @@ public class Player : MonoBehaviour
 		SpriteRenderer 	sr;
 	#endregion
 
+	#region Events
+		[Header("Events")]
+		public 			UnityEvent OnRespawnEvent;
+
+		[System.Serializable]
+		public class 	Vector2Event : UnityEvent<Vector2> {}
+		public 			Vector2Event OnGravityChange;
+	#endregion
+
 	private void Awake()
 	{
 		rb = GetComponent<Rigidbody2D>();
 		sr = GetComponent<SpriteRenderer>();
+
+		if (OnRespawnEvent 	== null) OnRespawnEvent 	= new UnityEvent();
+		if (OnGravityChange == null) OnGravityChange 	= new Vector2Event();
 	}
 
 	void Start()
@@ -78,6 +91,7 @@ public class Player : MonoBehaviour
 		transform.rotation = Quaternion.Euler(0f, 0f, rotAngle); // TODO: smooth rotation
 
 		dirGravity 	= dir; 						// Gravity direction
+		OnGravityChange.Invoke(dir);
 		dirGForce 	= GForce * rb.mass * dir;
 		jumpDir 	= -dir * JumpForce; 		// Jump direction
 		isMoveVer 	= dir.y == 0f; 				// Vertical move
@@ -153,6 +167,7 @@ public class Player : MonoBehaviour
 
 		IEnumerator Transition()
 		{
+			OnRespawnEvent.Invoke();
 			yield return new WaitForSeconds(2);
 			Spawn();
 		}
