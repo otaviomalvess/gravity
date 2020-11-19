@@ -1,16 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Tilemaps;
-using Cinemachine;
 
 public class GameControl : MonoBehaviour
 {
 	#region Serialize
-		[SerializeField] Player 				pl; 		// Player
-		[SerializeField] CinemachineConfiner 	cam;
-		[SerializeField] GameObject 			map; 		// Game map
-		[SerializeField] Room 					curRoom; 	// The room the player is current in
+		[SerializeField] Player 	pl; 		// Player
+		[SerializeField] GameObject map; 		// Game map
+		[SerializeField] Room 		curRoom; 	// The room the player is current in
 	#endregion
 
 	Transform[] roomFragilePlatforms;
@@ -31,19 +28,19 @@ public class GameControl : MonoBehaviour
 		}
 	}
 
-	public void LoadNextRoom()
-	{	
-		// Room
-		curRoom.gameObject.SetActive(false);
-		curRoom = curRoom.roomExit.nextRoom;
-		curRoom.gameObject.SetActive(true);
+	public void LoadNextRoom(Room nextRoom, Transform nextCheckpoint)
+	{
+		nextRoom.gameObject.SetActive(true);
+		pl.SetCheckpoint(nextCheckpoint);
+		StartCoroutine(WaitCamPan(nextRoom));
+	}
 
-		// Player
-		pl.SetCheckpoint(curRoom.checkpoint);
-		
-		// Camera
-        cam.m_BoundingShape2D = curRoom.bounds;
-        cam.InvalidatePathCache();
+	IEnumerator WaitCamPan(Room nextRoom)
+	{
+		yield return new WaitForSeconds(.5f);
+
+		curRoom.gameObject.SetActive(false);
+		curRoom = nextRoom;
 	}
 
 	public void ReloadRoom()

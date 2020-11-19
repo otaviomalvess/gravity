@@ -5,18 +5,22 @@ using UnityEngine.Events;
 
 public class Exit : MonoBehaviour
 {
-	public Room 		nextRoom;
-	public UnityEvent 	OnLoadEvent;
+	[SerializeField] Room 		nextRoom;
+	[SerializeField] Transform 	nextCheckpoint;
 
-	void Awake()
+	public class 	LoadNextRoomEvent : UnityEvent<Room, Transform> {}
+	public 			LoadNextRoomEvent OnLoadEvent = new LoadNextRoomEvent();
+
+	void Start()
 	{
-		if (OnLoadEvent == null) OnLoadEvent = new UnityEvent();
+		GameControl gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameControl>();
+		OnLoadEvent.AddListener(gc.LoadNextRoom);
 	}
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
 		if (col.gameObject.layer != 9) return;
 
-		OnLoadEvent.Invoke();
+		OnLoadEvent.Invoke(nextRoom, nextCheckpoint);
 	}
 }

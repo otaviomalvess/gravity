@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
 		[SerializeField] Transform 	checkGround;	// A position marking where to check if the player is grounded
 		[SerializeField] Transform 	checkCeiling;	// A position marking where to check if the player is hitting the ceiling
 		[SerializeField] Transform 	checkPoint;
-		[SerializeField] Vector2  	test; 			// Variable for tests
+		[SerializeField] float  	test; 			// Variable for tests
 	#endregion
 
 	#region Consts
@@ -205,7 +205,6 @@ public class Player : MonoBehaviour
 	public void SetCheckpoint(Transform cp)
 	{
 		checkPoint = cp;
-		test = checkPoint.position;
 		Spawn();
 	}
 }
