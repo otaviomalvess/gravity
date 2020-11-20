@@ -141,8 +141,8 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.9, y: 0.95}
-  m_EdgeRadius: 0
+  m_Size: {x: 0.75, y: 0.85}
+  m_EdgeRadius: 0.05
 --- !u!50 &3399180577603791955
 Rigidbody2D:
   serializedVersion: 4
@@ -182,7 +182,7 @@ MonoBehaviour:
   checkGround: {fileID: 3399180578080902646}
   checkCeiling: {fileID: 0}
   checkPoint: {fileID: 0}
-  test: {x: 0, y: 0}
+  test: 0
   OnRespawnEvent:
     m_PersistentCalls:
       m_Calls:

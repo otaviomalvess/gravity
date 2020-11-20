@@ -33,11 +33,18 @@ public class FragilePlatform : MonoBehaviour
 
 	void Collapse()
 	{
-		gameObject.SetActive(false); // TODO: decide if destroy is better than disabling
+		gameObject.SetActive(false);
 	}
 
 	public void ChangeTriggerPosition(Vector2 dir)
 	{
+		if (transform.rotation.z != 0f) {
+			if 		(dir == Vector2.down) 	dir = Vector2.left;
+			else if (dir == Vector2.left) 	dir = Vector2.up;
+			else if (dir == Vector2.up) 	dir = Vector2.right;
+			else if (dir == Vector2.right) 	dir = Vector2.down;
+		}
+
 		if (dir == Vector2.up)
 		{
 			trigger.offset 	= new Vector2(0f, -.5f);
