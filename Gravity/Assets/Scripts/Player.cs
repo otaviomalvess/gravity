@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -36,9 +35,14 @@ public class Player : MonoBehaviour
 		SpriteRenderer 	sr;
 	#endregion
 
+	#region Public
+		public bool IsPaused = false;
+	#endregion
+
 	#region Events
 		[Header("Events")]
-		public 			UnityEvent OnRespawnEvent;
+		public 	UnityEvent OnRespawnEvent;
+		public 	UnityEvent OnPause;
 
 		[System.Serializable]
 		public class 	Vector2Event : UnityEvent<Vector2> {}
@@ -51,6 +55,7 @@ public class Player : MonoBehaviour
 		sr = GetComponent<SpriteRenderer>();
 
 		if (OnRespawnEvent 	== null) OnRespawnEvent 	= new UnityEvent();
+		if (OnPause 		== null) OnPause 			= new UnityEvent();
 		if (OnGravityChange == null) OnGravityChange 	= new Vector2Event();
 	}
 
@@ -61,6 +66,12 @@ public class Player : MonoBehaviour
 
 	void Update()
 	{
+		if (IsPaused) return;
+
+		// Pause
+		if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
+			OnPause.Invoke();
+
 		// Change gravity
 		if (canGChange)
 		{

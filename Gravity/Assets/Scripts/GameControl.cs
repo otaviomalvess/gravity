@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameControl : MonoBehaviour
@@ -8,6 +7,11 @@ public class GameControl : MonoBehaviour
 		[SerializeField] Player 	pl; 		// Player
 		[SerializeField] GameObject map; 		// Game map
 		[SerializeField] Room 		curRoom; 	// The room the player is current in
+		[SerializeField] Canvas		canvas;
+	#endregion
+
+	#region Vars
+		bool isPaused = true;
 	#endregion
 
 	Transform[] roomFragilePlatforms;
@@ -15,6 +19,7 @@ public class GameControl : MonoBehaviour
 	void Awake()
 	{
 		DisableRooms();
+		Pause();
 	}
 
 	void DisableRooms()
@@ -51,5 +56,13 @@ public class GameControl : MonoBehaviour
 	public void UpdateRoom(Vector2 dir)
 	{
 		curRoom.UpdatePlatformTrigger(dir);
+	}
+
+	public void Pause()
+	{
+		isPaused 		= !isPaused;
+		pl.IsPaused 	= isPaused;
+		Time.timeScale 	= isPaused ? 0f : 1f;
+		canvas.gameObject.SetActive(isPaused);
 	}
 }
