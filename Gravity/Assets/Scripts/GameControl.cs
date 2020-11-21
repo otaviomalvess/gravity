@@ -48,7 +48,7 @@ public class GameControl : MonoBehaviour
 		curRoom.ReloadRoom();
 	}
 
-	public void UpdatePlatformTrigger(Vector2 dir)
+	public void UpdateRoom(Vector2 dir)
 	{
 		curRoom.UpdatePlatformTrigger(dir);
 	}

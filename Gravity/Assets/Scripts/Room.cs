@@ -1,9 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class Room : MonoBehaviour
 {
+	#region Serialize
+		[SerializeField] Transform camOffset;
+	#endregion
+
 	#region Public
 		public Transform 			checkpoint;
 		public Exit 				roomExit;
@@ -11,7 +16,7 @@ public class Room : MonoBehaviour
 	#endregion
 
 	#region Private
-		GameObject[] fragilePlatforms;
+		GameObject[] 			fragilePlatforms;
 	#endregion
 
 	void Start()

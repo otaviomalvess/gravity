@@ -8,9 +8,9 @@ public class Player : MonoBehaviour
 	#region Serialized
 		[SerializeField] LayerMask 	whatIsGround;	// A mask determining what is ground to the character
 		[SerializeField] Transform 	checkGround;	// A position marking where to check if the player is grounded
-		[SerializeField] Transform 	checkCeiling;	// A position marking where to check if the player is hitting the ceiling
+		[SerializeField] Transform 	camOffset;		// A position marking the camera offset
 		[SerializeField] Transform 	checkPoint;
-		[SerializeField] float  	test; 			// Variable for tests
+		[SerializeField] Vector2  	test; 			// Variable for tests
 	#endregion
 
 	#region Consts
@@ -18,7 +18,7 @@ public class Player : MonoBehaviour
 		const float JumpForce 		= 3200f;
 		const float GForce 			= 13f;
 		const float VelBulletTime 	= 2f;
-		const float FallLimit 		= 30f;
+		const float FallLimit 		= 20f;
 	#endregion
 
 	#region Vars
@@ -62,14 +62,12 @@ public class Player : MonoBehaviour
 	void Update()
 	{
 		// Change gravity
-		if (Input.GetButton("Change Gravity") && canGChange)
+		if (canGChange)
 		{
-			if (Input.GetKey(KeyCode.W)) ChangeGravity(Vector2.up);
-			if (Input.GetKey(KeyCode.S)) ChangeGravity(Vector2.down);
-			if (Input.GetKey(KeyCode.A)) ChangeGravity(Vector2.left);
-			if (Input.GetKey(KeyCode.D)) ChangeGravity(Vector2.right);
-
-			return;
+			if (Input.GetKey(KeyCode.I)) ChangeGravity(Vector2.up);
+			if (Input.GetKey(KeyCode.K)) ChangeGravity(Vector2.down);
+			if (Input.GetKey(KeyCode.J)) ChangeGravity(Vector2.left);
+			if (Input.GetKey(KeyCode.L)) ChangeGravity(Vector2.right);
 		}
 		
 		// Walk
@@ -77,8 +75,8 @@ public class Player : MonoBehaviour
 		else 			run = Input.GetAxisRaw("Vertical") 		* SpeedRun;
 
 		// Jump
-		if (Input.GetButtonDown("Jump") && isGrounded) 	isJumping = true;
-		if (Input.GetButtonUp("Jump")) 	JumpCut();
+		if (Input.GetButtonDown("Jump") && isGrounded) isJumping = true;
+		if (Input.GetButtonUp("Jump")) JumpCut();
 	}
 
 	void ChangeGravity(Vector2 dir)
@@ -91,8 +89,9 @@ public class Player : MonoBehaviour
 		transform.rotation = Quaternion.Euler(0f, 0f, rotAngle); // TODO: smooth rotation
 
 		dirGravity 	= dir; 						// Gravity direction
-		OnGravityChange.Invoke(dir);
 		dirGForce 	= GForce * rb.mass * dir;
+
+		OnGravityChange.Invoke(dir);
 		jumpDir 	= -dir * JumpForce; 		// Jump direction
 		isMoveVer 	= dir.y == 0f; 				// Vertical move
 		canGChange 	= false;
@@ -111,7 +110,7 @@ public class Player : MonoBehaviour
 	void ApplyGravity()
 	{
 		Vector2 apply = rb.velocity + (dirGForce * Time.fixedDeltaTime);
-		
+
 		// Limit fall speed
 		if 		(dirGravity == Vector2.down) 	apply.y = apply.y < -FallLimit ? -FallLimit : apply.y;
 		else if (dirGravity == Vector2.up) 		apply.y = apply.y >  FallLimit ?  FallLimit : apply.y;
@@ -190,7 +189,6 @@ public class Player : MonoBehaviour
 			
 			isGrounded = colGround != null;
 			if (isGrounded) canGChange = true;
-
 		}
 
 		void OnCollisionEnter2D(Collision2D col)
