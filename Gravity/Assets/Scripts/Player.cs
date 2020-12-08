@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
 	#endregion
 
 	#region Vars
+		bool 			gFirstTime 	= true;
 		bool 			isGrounded	= false;
 		bool 			isDead 		= false;
 		bool 			isJumping 	= false;
@@ -106,6 +107,12 @@ public class Player : MonoBehaviour
 		jumpDir 	= -dir * JumpForce; 		// Jump direction
 		isMoveVer 	= dir.y == 0f; 				// Vertical move
 		canGChange 	= false;
+
+		// Start music
+		if (gFirstTime && dir != Vector2.down) {
+			gFirstTime = !gFirstTime;
+			GameObject.Find("Music").GetComponent<MusicController>().PlayMusic();
+		}
 	}
 
 	void FixedUpdate()
