@@ -23,8 +23,10 @@ public class Player : MonoBehaviour
 	#region Vars
 		bool 			gFirstTime 	= true;
 		bool 			isGrounded	= false;
+		bool 			wasGrounded = false;
 		bool 			isDead 		= false;
 		bool 			isJumping 	= false;
+		bool 			jumpedOnce  = false;
 		bool 			isHelding 	= false;
 		bool 			canGChange 	= false;
 		bool 			isMoveVer 	= false; 	// Whether the player movement is in the X or Y axis
@@ -34,6 +36,7 @@ public class Player : MonoBehaviour
 		Vector2 		dirGravity 	= Vector2.down;
 		Rigidbody2D 	rb;
 		SpriteRenderer 	sr;
+		Animator 		anim;
 	#endregion
 
 	#region Public
@@ -42,8 +45,9 @@ public class Player : MonoBehaviour
 
 	#region Events
 		[Header("Events")]
-		public 	UnityEvent OnRespawnEvent;
-		public 	UnityEvent OnPause;
+		public UnityEvent OnRespawnEvent;
+		public UnityEvent OnPause;
+		public UnityEvent StartMusic;
 
 		[System.Serializable]
 		public class 	Vector2Event : UnityEvent<Vector2> {}
@@ -52,11 +56,13 @@ public class Player : MonoBehaviour
 
 	private void Awake()
 	{
-		rb = GetComponent<Rigidbody2D>();
-		sr = GetComponent<SpriteRenderer>();
+		rb 	 = GetComponent<Rigidbody2D>();
+		sr 	 = GetComponent<SpriteRenderer>();
+		anim = GetComponent<Animator>();
 
 		if (OnRespawnEvent 	== null) OnRespawnEvent 	= new UnityEvent();
 		if (OnPause 		== null) OnPause 			= new UnityEvent();
+		if (StartMusic 		== null) StartMusic 		= new UnityEvent();
 		if (OnGravityChange == null) OnGravityChange 	= new Vector2Event();
 	}
 
@@ -111,7 +117,7 @@ public class Player : MonoBehaviour
 		// Start music
 		if (gFirstTime && dir != Vector2.down) {
 			gFirstTime = !gFirstTime;
-			GameObject.Find("Music").GetComponent<MusicController>().PlayMusic();
+			StartMusic.Invoke();
 		}
 	}
 
@@ -157,6 +163,8 @@ public class Player : MonoBehaviour
 		{
 			if (!isJumping) return;
 
+			anim.SetTrigger("jump");
+			
 			rb.AddForce(jumpDir);
 			isJumping = false;
 		}
@@ -185,7 +193,7 @@ public class Player : MonoBehaviour
 		IEnumerator Transition()
 		{
 			OnRespawnEvent.Invoke();
-			yield return new WaitForSeconds(2);
+			yield return new WaitForSeconds(1.2f);
 			Spawn();
 		}
 
@@ -202,11 +210,14 @@ public class Player : MonoBehaviour
 
 		void Collision()
 		{
-			Collider2D colGround 	= Physics2D.OverlapBox(checkGround.transform.position, 	new Vector2(transform.localScale.x, .2f), 0f, whatIsGround);
-			// Collider2D colCeiling 	= Physics2D.OverlapBox(checkCeiling.transform.position, new Vector2(transform.localScale.x, .2f), 0f, 11);
-			
+			Collider2D colGround = Physics2D.OverlapBox(checkGround.transform.position, new Vector2(transform.localScale.x, .2f), 0f, whatIsGround);
+
 			isGrounded = colGround != null;
-			if (isGrounded) canGChange = true;
+			
+			if (isGrounded) 				canGChange = true;
+			if (!wasGrounded && isGrounded) anim.SetTrigger("land");
+			
+			wasGrounded = isGrounded;
 		}
 
 		void OnCollisionEnter2D(Collision2D col)

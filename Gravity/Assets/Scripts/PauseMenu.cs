@@ -4,17 +4,25 @@ using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
-    [SerializeField] GameObject  btResume;
-    [SerializeField] GameObject  btQuit;
-    [SerializeField] GameControl gc;
-    [SerializeField] Sprite      btSel;
-    [SerializeField] Sprite      btUns;
-    [SerializeField] Text        txtResume;
-    [SerializeField] Text        txtQuit;
+    #region Serialized
+        [SerializeField] GameObject  btResume;
+        [SerializeField] GameObject  btQuit;
+        [SerializeField] GameControl gc;
+        [SerializeField] Sprite      btSel;
+        [SerializeField] Sprite      btUns;
+        [SerializeField] Text        txtResume;
+        [SerializeField] Text        txtQuit;
+    #endregion
 
-    bool    resumeSelected = true;
-    Image   imgResume;
-    Image   imgQuit;
+    #region Vars
+        bool    resumeSelected = true;
+        Image   imgResume;
+        Image   imgQuit;
+    #endregion
+    
+    #region Public
+        public bool IsPaused = false;
+    #endregion
 
     void Start()
     {
@@ -25,7 +33,10 @@ public class PauseMenu : MonoBehaviour
         imgQuit   = btQuit.GetComponent<Image>();
     }
 
-    void Update() {
+    void Update()
+    {
+        if (!IsPaused) return;
+
         if (Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.DownArrow)) {
             resumeSelected = !resumeSelected;
             ChangeButton();

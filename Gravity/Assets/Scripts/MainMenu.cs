@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -12,10 +13,11 @@ public class MainMenu : MonoBehaviour
     [SerializeField] Text       txtStart;
     [SerializeField] Text       txtExit;
 
-    bool    startSelected   = true;
-    Vector3 rot             = new Vector3(0f, 0f, .2f);
-    Image   imgStart;
-    Image   imgExit;
+    bool     startSelected   = true;
+    Vector3  rot             = new Vector3(0f, 0f, .2f);
+    Image    imgStart;
+    Image    imgExit;
+    Animator anim;
 
     void Start()
     {
@@ -23,10 +25,12 @@ public class MainMenu : MonoBehaviour
         btExit.SetActive(true);
 
         imgStart = btStart.GetComponent<Image>();
-        imgExit  = btExit.GetComponent<Image>();
+        imgExit  =  btExit.GetComponent<Image>();
+        anim     = GetComponent<Animator>();
     }
 
-    void Update() {
+    void Update()
+    {
         player.transform.Rotate(rot);
 
         if (Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.DownArrow)) {
@@ -41,16 +45,16 @@ public class MainMenu : MonoBehaviour
         }
     }
 
-    void ChangeButton() {
-        if (startSelected) {
-
+    void ChangeButton()
+    {
+        if (startSelected)
+        {
             imgStart.sprite = btSel;
             imgExit.sprite  = btUns;
             txtStart.color  = Color.black;
             txtExit.color   = Color.white;
-
-        } else {
-
+        } 
+        else {
             imgStart.sprite = btUns;
             imgExit.sprite  = btSel;
             txtStart.color  = Color.white;
@@ -60,6 +64,13 @@ public class MainMenu : MonoBehaviour
 
     public void StartGame()
     {
+        StartCoroutine(Transition());
+    }
+
+    IEnumerator Transition()
+    {
+        anim.SetTrigger("fade");
+        yield return new WaitForSeconds(1.5f);
         SceneManager.LoadScene(1);
     }
 

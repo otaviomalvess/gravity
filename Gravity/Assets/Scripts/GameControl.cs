@@ -4,17 +4,18 @@ using UnityEngine;
 public class GameControl : MonoBehaviour
 {
 	#region Serialize
-		[SerializeField] Player 	pl; 		// Player
-		[SerializeField] GameObject map; 		// Game map
-		[SerializeField] Room 		curRoom; 	// The room the player is current in
-		[SerializeField] Canvas		canvas;
+		[SerializeField] Player 	pl; 				 // Player
+		[SerializeField] GameObject map; 				 // Game map
+		[SerializeField] Room 		curRoom; 			 // The room the player is current in
+		[SerializeField] GameObject canvas;
+		[SerializeField] GameObject	pause;
+		[SerializeField] Animator 	animDeathTransition; // Player death transition controller
 	#endregion
 
 	#region Vars
-		bool isPaused = true;
+		bool 	 		isPaused = true;
+		MusicController music;
 	#endregion
-
-	Transform[] roomFragilePlatforms;
 
 	void Awake()
 	{
@@ -31,6 +32,12 @@ public class GameControl : MonoBehaviour
 
 			child.gameObject.SetActive(false);
 		}
+	}
+
+	void Start()
+	{
+		GameObject temp = GameObject.Find("Music");
+		if (temp != null) music = temp.GetComponent<MusicController>();
 	}
 
 	public void LoadNextRoom(Room nextRoom, Transform nextCheckpoint)
@@ -50,7 +57,15 @@ public class GameControl : MonoBehaviour
 
 	public void ReloadRoom()
 	{
+		StartCoroutine(Transition());
+	}
+
+	IEnumerator Transition()
+	{
+		animDeathTransition.SetTrigger("start");
+		yield return new WaitForSeconds(.5f);
 		curRoom.ReloadRoom();
+		animDeathTransition.SetTrigger("end");
 	}
 
 	public void UpdateRoom(Vector2 dir)
@@ -63,6 +78,13 @@ public class GameControl : MonoBehaviour
 		isPaused 		= !isPaused;
 		pl.IsPaused 	= isPaused;
 		Time.timeScale 	= isPaused ? 0f : 1f;
-		canvas.gameObject.SetActive(isPaused);
+		pause.SetActive(isPaused);
+		canvas.GetComponent<PauseMenu>().IsPaused = isPaused;
+	}
+
+	public void StartMusic()
+	{
+		if (music == null) return;
+		music.GetComponent<MusicController>().PlayMusic();
 	}
 }

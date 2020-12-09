@@ -9,17 +9,20 @@ public class MusicController : MonoBehaviour
 
     AudioSource asrc;
 
-    void Awake() {
+    void Awake()
+    {
         DontDestroyOnLoad(gameObject);
         asrc = GetComponent<AudioSource>();
     }
 
-    public void PlayMusic() {
+    public void PlayMusic()
+    {
         asrc.clip = acMusic;
         asrc.Play(); 
     }
 
-    public void Stop() {
+    public void Stop()
+    {
         asrc.Stop();
     }
 }
