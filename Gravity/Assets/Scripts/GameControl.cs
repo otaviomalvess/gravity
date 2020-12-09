@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameControl : MonoBehaviour
 {
@@ -86,5 +87,10 @@ public class GameControl : MonoBehaviour
 	{
 		if (music == null) return;
 		music.GetComponent<MusicController>().PlayMusic();
+	}
+
+	public void End()
+	{
+		SceneManager.LoadScene(2);
 	}
 }

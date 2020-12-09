@@ -48,6 +48,7 @@ public class Player : MonoBehaviour
 		public UnityEvent OnRespawnEvent;
 		public UnityEvent OnPause;
 		public UnityEvent StartMusic;
+		public UnityEvent ChangeScene;
 
 		[System.Serializable]
 		public class 	Vector2Event : UnityEvent<Vector2> {}
@@ -63,6 +64,7 @@ public class Player : MonoBehaviour
 		if (OnRespawnEvent 	== null) OnRespawnEvent 	= new UnityEvent();
 		if (OnPause 		== null) OnPause 			= new UnityEvent();
 		if (StartMusic 		== null) StartMusic 		= new UnityEvent();
+		if (ChangeScene 	== null) ChangeScene 		= new UnityEvent();
 		if (OnGravityChange == null) OnGravityChange 	= new Vector2Event();
 	}
 
@@ -224,7 +226,8 @@ public class Player : MonoBehaviour
 		{
 			switch(col.gameObject.layer)
 			{
-				case 10: Respawn(); return;
+				case 10: Respawn(); 			return;
+				case 11: ChangeScene.Invoke(); 	return;
 			}
 		}
 	#endregion
