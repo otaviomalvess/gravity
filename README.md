@@ -15,8 +15,8 @@ Unity 2020.1.6f1 + C#.
 
 ## Authors
 
-@otaviomalvess (Programming && Art)
-@1nickael1 (Programming)
+- @otaviomalvess (Programming && Art)
+- @1nickael1 (Programming)
 
 ## Credits
 
